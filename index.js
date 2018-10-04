@@ -11,7 +11,7 @@ class GosApiFramework {
     /**
      * Bootstrap the server with the config
      */
-    run() {
+    async run() {
         const config = this.config;
         const http_options = {
             app: config.app.name,
@@ -38,18 +38,19 @@ class GosApiFramework {
             }
         });
 
-        app.listen(config.http.port, function() {
-            console.log(`App started on ${config.http.host}:${config.http.port} with ssl=${config.http.ssl}`);
-            console.log('OS: ' + os.platform() + ', ' + os.release());
-        });
-
         require('./restify')(app, config, log);
 
-        require('./bootstrap')(app, config, log);
+        await require('./bootstrap')(app, config, log);
+
+        return new Promise(resolve => {
+            app.listen(config.http.port, function() {
+                console.log(`App started on ${config.http.host}:${config.http.port} with ssl=${config.http.ssl}`);
+                console.log('OS: ' + os.platform() + ', ' + os.release());
+                resolve();
+            });
+        });
     }
 }
 
-module.exports = {
-    Framework: GosApiFramework,
-    ApiValidator: require('./lib/api-validator')
-};
+module.exports = GosApiFramework;
+module.exports.ApiValidator = require('./lib/api-validator');

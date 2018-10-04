@@ -1,6 +1,6 @@
 {
   "name": "gos-framework",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Nodejs Framework for Api Server",
   "main": "index.js",
   "directories": {
@@ -23,7 +23,7 @@
     "helmet": "^3.13.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
-    "mysql2": "^1.6.1",
+    "pg": "^7.5.0",
     "restify": "^7.2.1",
     "sequelize": "^4.39.0",
     "sequelize-cli": "^4.1.1",

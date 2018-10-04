@@ -1,4 +1,5 @@
 const ApiValidator = require('../../../../index').ApiValidator;
+const Book = require('../../models').Book;
 
 const PARAMETERS = {
     '$code': ApiValidator.STRING,
@@ -25,5 +26,9 @@ module.exports = async params => {
         paramDesc: PARAMETERS,
         isParse: true
     })
-    return data;
+    let book = await Book.create({
+        code: data.code,
+        name: data.name
+    })
+    return book;
 }

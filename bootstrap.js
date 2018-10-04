@@ -60,7 +60,7 @@ function initDatabase(config, log) {
     return sequelize;
 }
 
-module.exports = function(app, config, log) {
+module.exports = async function(app, config, log) {
     // init database
     const db = initDatabase(config, log);
 
@@ -69,4 +69,7 @@ module.exports = function(app, config, log) {
 
     // get all routers
     glob.getGlobbedFiles(path.normalize(path.join(config.route, '**', '*.js'))).forEach(routePath => initRoute(app, db, config, require(routePath), log));
+
+    // run db sync
+    await db.sync();
 }

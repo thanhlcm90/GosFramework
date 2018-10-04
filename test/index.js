@@ -1,4 +1,4 @@
-const GosApiFramework = require('..').Framework;
+const GosApiFramework = require('..');
 const config = require('./config');
 let server = new GosApiFramework(config);
-server.run();
+server.run().then(() => console.log('Server init finish'));
