@@ -2,10 +2,10 @@ const glob = require('./lib/glob');
 const Sequelize = require('sequelize');
 const path = require('path');
 
-function asyncMiddleware(fn, log) {
+function asyncMiddleware(fn, db, log) {
     return (req, res) => {
         Promise.resolve(async function(req, res) {
-            let data = await fn(req.params);
+            let data = await fn(req.params, db);
             if (data) {
                 res.send(200, data);
             } else {
@@ -23,13 +23,13 @@ function asyncMiddleware(fn, log) {
     };
 }
 
-function initRoute(app, config, items, log) {
+function initRoute(app, db, config, items, log) {
     items.forEach(item => {
         let func = app[item.method];
         if (!item.auth) {
-            func.call(app, item.route, asyncMiddleware(item.controller, log));
+            func.call(app, item.route, asyncMiddleware(item.controller, db, log));
         } else if (config.auth) {
-            func.call(app, item.route, config.auth, asyncMiddleware(item.controller, log));
+            func.call(app, item.route, config.auth, asyncMiddleware(item.controller, db, log));
         }
     });
 }
@@ -65,8 +65,8 @@ module.exports = function(app, config, log) {
     const db = initDatabase(config, log);
 
     // init models
-    glob.getGlobbedFiles(path.normalize(path.join(config.model, '**', '*.js'))).forEach(modelPath => require(modelPath)(db));
+    require(path.normalize(path.join(config.model, 'index.js'))).init(db);
 
     // get all routers
-    glob.getGlobbedFiles(path.normalize(path.join(config.route, '**', '*.js'))).forEach(routePath => initRoute(app, config, require(routePath), log));
+    glob.getGlobbedFiles(path.normalize(path.join(config.route, '**', '*.js'))).forEach(routePath => initRoute(app, db, config, require(routePath), log));
 }

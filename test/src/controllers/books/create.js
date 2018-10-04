@@ -1,4 +1,5 @@
-const ApiValidator = require('../../../framework').ApiValidator;
+const ApiValidator = require('../../../../index').ApiValidator;
+
 const PARAMETERS = {
     '$code': ApiValidator.STRING,
     '$name': ApiValidator.STRING,
