@@ -62,10 +62,12 @@ function initDatabase(config, log) {
 
 module.exports = async function(app, config, log) {
     // init database
-    const db = initDatabase(config, log);
+    if (config.database) {
+        const db = initDatabase(config, log);
 
-    // init models
-    require(path.normalize(path.join(config.model, 'index.js'))).init(db);
+        // init models
+        require(path.normalize(path.join(config.model, 'index.js'))).init(db);
+    }
 
     // get all routers
     glob.getGlobbedFiles(path.normalize(path.join(config.route, '**', '*.js'))).forEach(routePath => initRoute(app, db, config, require(routePath), log));
