@@ -38,15 +38,13 @@ function initDatabase(config, log) {
     let { dialect, database, user, password, host } = config.database;
     const sequelize = new Sequelize(database, user, password, {
         host: host,
-        dialect: dialect,
-        operatorsAliases: false,
-
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000
-        }
+        dialect: dialect
+        // pool: {
+        //     max: 5,
+        //     min: 0,
+        //     acquire: 30000,
+        //     idle: 10000
+        // }
     });
     sequelize
         .authenticate()
@@ -62,15 +60,20 @@ function initDatabase(config, log) {
 
 module.exports = async function(app, config, log) {
     // init database
+    let db;
     if (config.database) {
-        const db = initDatabase(config, log);
+        db = initDatabase(config, log);
 
         // init models
-        require(path.normalize(path.join(config.model, 'index.js'))).init(db);
+        if (config.model) {
+            require(path.normalize(path.join(config.model, 'index.js'))).init(db);
+        }
     }
 
     // get all routers
-    glob.getGlobbedFiles(path.normalize(path.join(config.route, '**', '*.js'))).forEach(routePath => initRoute(app, db, config, require(routePath), log));
+    if (config.route) {
+        glob.getGlobbedFiles(path.normalize(path.join(config.route, '**', '*.js'))).forEach(routePath => initRoute(app, db, config, require(routePath), log));
+    }
 
     // run db sync
     await db.sync();
