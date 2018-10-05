@@ -75,6 +75,8 @@ module.exports = async function(app, config, log) {
         glob.getGlobbedFiles(path.normalize(path.join(config.route, '**', '*.js'))).forEach(routePath => initRoute(app, db, config, require(routePath), log));
     }
 
-    // run db sync
-    await db.sync();
+    if (db) {
+        // run db sync
+        await db.sync();
+    }
 }
