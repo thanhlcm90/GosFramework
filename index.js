@@ -4,8 +4,9 @@ const os = require('os');
 
 class GosApiFramework {
 
-    constructor(config) {
+    constructor(config, log) {
         this.config = config;
+        this.log = log || console;
     }
 
     /**
@@ -17,7 +18,6 @@ class GosApiFramework {
             app: config.app.name,
             version: config.app.version
         };
-        const log = require('./lib/log')(config);
 
         // config for ssl
         if (config.ssl) {
@@ -31,16 +31,16 @@ class GosApiFramework {
         // catch the EADDRINUSE error
         app.on('error', function(err) {
             if (err.errno === 'EADDRINUSE') {
-                log.error('Port already in use.');
+                this.log.error('Port already in use.');
                 process.exit(1);
             } else {
-                log.log(err);
+                this.log.log(err);
             }
         });
 
-        require('./restify')(app, config, log);
+        require('./restify')(app, config, this.log);
 
-        await require('./bootstrap')(app, config, log);
+        await require('./bootstrap')(app, config, this.log);
 
         return new Promise(resolve => {
             app.listen(config.http.port, function() {
