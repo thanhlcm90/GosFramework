@@ -1,6 +1,6 @@
 {
   "name": "gos-framework",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Nodejs Framework for Api Server",
   "main": "index.js",
   "directories": {

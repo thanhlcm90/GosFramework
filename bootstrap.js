@@ -85,4 +85,6 @@ module.exports = async function(app, config, log) {
         // run db sync
         await db.sync();
     }
+
+    return { db };
 }

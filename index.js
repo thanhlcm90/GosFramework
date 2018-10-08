@@ -40,13 +40,13 @@ class GosApiFramework {
 
         require('./restify')(app, config, this.log);
 
-        await require('./bootstrap')(app, config, this.log);
+        let { db } = await require('./bootstrap')(app, config, this.log);
 
         return new Promise(resolve => {
             app.listen(config.http.port, function() {
                 console.log(`App started on ${config.http.host}:${config.http.port} with ssl=${config.http.ssl}`);
                 console.log('OS: ' + os.platform() + ', ' + os.release());
-                resolve();
+                resolve({ app, db });
             });
         });
     }
