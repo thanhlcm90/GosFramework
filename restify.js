@@ -2,6 +2,7 @@ const restify = require('restify');
 const helmet = require('helmet');
 const moment = require('moment');
 const passport = require('passport');
+const corsMiddleware = require('restify-cors-middleware')
 
 module.exports = (app, config, log) => {
 
@@ -13,6 +14,12 @@ module.exports = (app, config, log) => {
 
     app.pre(restify.pre.sanitizePath());
     app.pre(restify.pre.userAgentConnection());
+
+    if (config.http.cors) {
+        const cors = corsMiddleware(config.http.cors);
+        app.pre(cors.preflight)
+        app.use(cors.actual)
+    }
 
     app.use(restify.plugins.authorizationParser());
     app.use(restify.plugins.queryParser({ mapParams: true }));
