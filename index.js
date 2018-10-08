@@ -54,3 +54,5 @@ class GosApiFramework {
 
 module.exports = GosApiFramework;
 module.exports.ApiValidator = require('./lib/api-validator');
+module.exports.User = require('./lib/strategies/user');
+module.exports.JWT = require('./lib/strategies/jwt');

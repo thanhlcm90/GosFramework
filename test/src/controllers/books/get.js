@@ -1,3 +1,6 @@
-module.exports = async params => {
-    
+const Book = require('../../models').Book;
+
+module.exports = async (params, db, config) => {
+    let data = await Book.findAll();
+    return data;
 }

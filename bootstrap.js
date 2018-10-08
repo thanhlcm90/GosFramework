@@ -1,11 +1,12 @@
 const glob = require('./lib/glob');
 const Sequelize = require('sequelize');
 const path = require('path');
+const jwt = require('./lib/strategies/jwt');
 
-function asyncMiddleware(fn, db, log) {
+function asyncMiddleware(fn, db, config, log) {
     return (req, res) => {
         Promise.resolve(async function(req, res) {
-            let data = await fn(req.params, db);
+            let data = await fn(req.params, db, config, log);
             if (data) {
                 res.send(200, data);
             } else {
@@ -27,9 +28,9 @@ function initRoute(app, db, config, items, log) {
     items.forEach(item => {
         let func = app[item.method];
         if (!item.auth) {
-            func.call(app, item.route, asyncMiddleware(item.controller, db, log));
-        } else if (config.auth) {
-            func.call(app, item.route, config.auth, asyncMiddleware(item.controller, db, log));
+            func.call(app, item.route, asyncMiddleware(item.controller, db, config, log));
+        } else if (config.authenticate && config.authenticate.enable) {
+            func.call(app, item.route, jwt.checkAuthenticate, asyncMiddleware(item.controller, db, config, log));
         }
     });
 }
@@ -67,6 +68,11 @@ module.exports = async function(app, config, log) {
         // init models
         if (config.model) {
             require(path.normalize(path.join(config.model, 'index.js'))).init(db);
+        }
+
+        if (config.authenticate && config.authenticate.enable) {
+            require('./lib/strategies/user').init(db);
+            require('./lib/strategies/jwt').jwtStrategy(db, config.authenticate);
         }
     }
 

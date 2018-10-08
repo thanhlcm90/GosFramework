@@ -1,6 +1,7 @@
 const restify = require('restify');
 const helmet = require('helmet');
 const moment = require('moment');
+const passport = require('passport');
 
 module.exports = (app, config, log) => {
 
@@ -17,6 +18,12 @@ module.exports = (app, config, log) => {
     app.use(restify.plugins.queryParser({ mapParams: true }));
     app.use(restify.plugins.bodyParser({ mapParams: true }));
     app.use(restify.plugins.gzipResponse());
+
+    if (config.authenticate && config.authenticate.enable) {
+        // use passport session
+        app.use(passport.initialize());
+        app.use(passport.session());
+    }
 
     // Use helmet to secure Express headers
     app.use(helmet());

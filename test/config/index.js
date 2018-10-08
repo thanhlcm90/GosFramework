@@ -11,5 +11,6 @@ module.exports = {
 
     http: require('./http'),
     log: require('./log'),
-    database: require('./database')
+    database: require('./database'),
+    authenticate: require('./authenticate')
 }
