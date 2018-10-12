@@ -36,9 +36,10 @@ function initRoute(app, db, config, items, log) {
 }
 
 function initDatabase(config, log) {
-    let { dialect, database, user, password, host } = config.database;
+    let { dialect, database, user, password, host, port } = config.database;
     const sequelize = new Sequelize(database, user, password, {
         host: host,
+        port: port,
         dialect: dialect
         // pool: {
         //     max: 5,

@@ -1,6 +1,6 @@
 module.exports = {
-    host: process.env.HTTP_PORT || 'localhost',
-    port: process.env.HTTP_HOST || '8082',
+    host: process.env.HTTP_HOST || 'localhost',
+    port: process.env.HTTP_PORT || '8082',
     ssl: false,
     cors: {
         origins: ['*'],
